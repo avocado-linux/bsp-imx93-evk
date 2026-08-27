@@ -21,7 +21,6 @@ extensions:
       fwup: '*'
       kernel-module-btnxpuart: '*'
       kernel-module-can-dev: '*'
-      kernel-module-crct10dif-ce: '*'
       kernel-module-flexcan: '*'
       kernel-module-imx-pcm-dma: '*'
       kernel-module-imx8-media-dev: '*'
@@ -29,7 +28,6 @@ extensions:
       kernel-module-polyval-ce: '*'
       kernel-module-polyval-generic: '*'
       kernel-module-rtc-pcf2127: '*'
-      kernel-module-rtc-pcf2131: '*'
       kernel-module-snd-soc-fsl-asoc-card: '*'
       kernel-module-snd-soc-fsl-micfil: '*'
       kernel-module-snd-soc-fsl-sai: '*'
@@ -38,6 +36,21 @@ extensions:
       kernel-module-snd-soc-imx-audmux: '*'
       kernel-module-snd-soc-imx-card: '*'
       kernel-module-snd-soc-wm8962: '*'
+
+    # Per-kernel packages, same shape as the imx8mp-evk BSP: avocado-cli picks
+    # the kernel-<version> block matching the feed's kernel at install time.
+    #
+    # 2024 feed (linux-imx 6.6) vs 2026 feed (linux-imx 6.18); a package listed
+    # unconditionally that one kernel does not build fails the install with
+    # "No match for argument: kernel-module-...".
+    #   crct10dif-ce: a module on 6.6; on 6.18 CONFIG_CRC_T10DIF(_ARCH)=y and the
+    #     acceleration lives in lib/crc.
+    #   rtc-pcf2131: its own driver on 6.6; on 6.18 the PCF2131 is handled by
+    #     rtc-pcf2127 (listed above), which also matches the EVK's nxp,pcf2131.
+    kernel-6.6.*:
+      packages:
+        kernel-module-crct10dif-ce: '*'
+        kernel-module-rtc-pcf2131: '*'
 
 sdk:
   image: docker.io/avocadolinux/sdk:{{ env.AVOCADO_DISTRO_RELEASE }}
